@@ -1,4 +1,4 @@
-# Importmagic.nvim
+# importmagic.nvim
 A neovim plugin to automatically import unresolved symbols in python, using [importmagic](https://github.com/alecthomas/importmagic). Highly WIP, expect lots of issues and breaking changes
 
 ## Installation
@@ -22,7 +22,7 @@ Currently the plugin exposes a single command - `:UpdateImports`, which searches
 * Prevent blocking on running `:UpdateImports` when indexing is running
 * Provide functionality to choose among available import targets when multiple are available
 * Find a way to save generated indexes
-*		May require dabbling in the importmagic package itself
-*		_Note_: The package currently does not support incremental indexing
+	* May require dabbling in the importmagic package itself
+	*	_Note_: The package currently does not support incremental indexing
 *	Find a better way to get `sys.path` of the editor
 

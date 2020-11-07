@@ -1,5 +1,3 @@
-import sys
-
 import importmagic
 import pynvim
 
@@ -11,14 +9,13 @@ class ImportMagicVim:
         self.index = importmagic.SymbolIndex()
         self.index_built = False
         self.update_source()
-        # self.create_index([])
 
     @pynvim.function("CreateIndex")
     def create_index(self, _):
         a = self.nvim.command_output(
             "echo system('python -c \"import sys; print(sys.path)\"')"
         )
-        self.nvim.out_write(a + "\n")
+        # self.nvim.out_write(a + "\n")
         self.index.build_index(eval(a))
         self.index_built = True
 
@@ -34,6 +31,7 @@ class ImportMagicVim:
     def get_update(self):
         self.update_source()
         scope = importmagic.Scope.from_source(self.source)
+        # self.nvim.out_write(repr(scope) + '\n')
         unresolved, unreferenced = scope.find_unresolved_and_unreferenced_symbols()
         if unresolved or unreferenced:
             start_line, end_line, import_block = importmagic.get_update(

@@ -16,13 +16,15 @@ Currently the plugin exposes a single command - `:UpdateImports`, which searches
 ## Issues
 1. The version of importmagic on PyPi does not recognise type hints as references. To fix this, install from source - `pip install git+https://github.com/alecthomas/importmagic`
 2. If the package containing the symbols is not installed, importmagic may find the symbol in a wrong package (rarely, most of the time it does nothing)
-3. Running `:UpdateImports` for the first time may be slow. The package needs to create an index of all packages in the environment, which happens in the background. However, if the function is called before indexing is finished, it blocks until the indexing is done and then performs the imports. Will be fixed
+3. Running `:UpdateImports` for the first time may be slow. The package needs to create an index of all packages in the environment, which happens in the background. However, if the function is called before indexing is finished, it blocks until the indexing is done and then performs the imports. Will be fixed  
+_Note_: This should be fixed, not rigorously tested yet
+
 
 ## TODO
-* Prevent blocking on running `:UpdateImports` when indexing is running
-* Provide functionality to choose among available import targets when multiple are available
-* Find a way to save generated indexes
+- [x] Prevent blocking on running `:UpdateImports` when indexing is running
+- [ ] Provide functionality to choose among available import targets when multiple are available
+- [ ] Find a way to save generated indexes
 	* May require dabbling in the importmagic package itself
 	*	_Note_: The package currently does not support incremental indexing
-*	Find a better way to get `sys.path` of the editor
+- [ ]	Find a better way to get `sys.path` of the editor
 

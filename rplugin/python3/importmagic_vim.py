@@ -28,7 +28,6 @@ class ImportMagicVim:
         global g_index_built
         g_nvim = nvim
         g_index = importmagic.SymbolIndex()
-        self.updateSource()
 
     def _createindex(self):
         global g_index_built

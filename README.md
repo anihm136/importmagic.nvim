@@ -4,10 +4,14 @@ A neovim plugin to automatically import unresolved symbols in python, using [imp
 ## Installation
 For now, it's simple -
 1. Install the importmagic package - `pip install importmagic`
-1. Install the plugin however you install other plugins
-2. Run `:UpdateRemotePlugins` to register the plugin  
-_Note_: Some plugin managers do this for you. If you have trouble just run it once and it should work fine
-3. Profit
+2. Install the plugin however you install other plugins
+3. Run `:UpdateRemotePlugins` to register the plugin  
+_Note_: Some plugin managers do this for you. If you have trouble just run it once and it should work fine  
+For example, if you are using [vim-plug](https://github.com/junegunn/vim-plug), you can add this to your plugin section -
+```
+Plug "anihm136/importmagic.nvim", {'do': ':UpdateRemotePlugins'}
+```
+4. Profit
 
 ## Usage
 Currently the plugin exposes a single command - `:UpdateImports`, which searches the file for unresolved symbols and unused imports. It then replaces these with a new import block, containing the best matches for where these symbols are defined  

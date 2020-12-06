@@ -45,7 +45,6 @@ class ImportMagicVim:
         g_index_path = eval(a)
         thread = as_thread(self._createindex)
         thread.start()
-        # thread.join()
         # g_nvim.out_write(str(getattr(thread, "failure", None)) + "\n")
         # if getattr(thread, "failure", None):
         #     g_nvim.out_write("Failed: {}...\n".format(thread.failure))
@@ -65,16 +64,57 @@ class ImportMagicVim:
         scope = importmagic.Scope.from_source(self.source)
         # self.nvim.out_write(repr(scope) + '\n')
         unresolved, unreferenced = scope.find_unresolved_and_unreferenced_symbols()
-        if unresolved or unreferenced:
-            start_line, end_line, import_block = importmagic.get_update(
-                self.source, g_index, unresolved, unreferenced
-            )
-            import_block = import_block.splitlines()[:-1]
-            return start_line, end_line, import_block
-        else:
+        if not unresolved and not unreferenced:
             return None
 
-    @pynvim.command("UpdateImports", nargs=0)
+        imports = importmagic.Imports(g_index, self.source)
+        imports.remove(unreferenced)
+
+        for symbol in unresolved:
+            ctr = 1
+            candidates = []
+            options = []
+            for score, module, variable in g_index.symbol_scores(symbol):
+                if ctr > 9:
+                    break
+                if variable is None:
+                    fmt = "import {}".format(str(module))
+                else:
+                    fmt = "from {} import {}".format(str(module), str(variable))
+
+                options.append(f"&{ctr}. {fmt}")
+                candidates.append((module, variable))
+                ctr += 1
+
+            if ctr == 2:
+                candidate = candidates[0]
+                if candidate[1] is None:
+                    imports.add_import(candidate[0])
+                else:
+                    imports.add_import_from(*candidate)
+                continue
+            options.append("&s Skip import")
+            options.append("&x Skip remaining")
+            imp_idx = g_nvim.call(
+                "confirm", "Choose import source:", "\n".join(options)
+            )
+            if imp_idx == len(options) - 1:
+                continue
+            elif imp_idx == len(options):
+                break
+            candidate = candidates[imp_idx - 1]
+
+            if candidate[1] is None:
+                imports.add_import(candidate[0])
+            else:
+                imports.add_import_from(*candidate)
+
+        # g_nvim.out_write(str(imports.get_update())+'\n')
+        start_line, end_line, import_block = imports.get_update()
+        import_block = import_block.splitlines()[:-1]
+        return start_line, end_line, import_block
+
+    @pynvim.command("UpdateImports", nargs=0, sync=True)
     def updateImports(self):
         if not g_index_built:
             g_nvim.err_write("Index is not built yet\n")

@@ -62,7 +62,6 @@ class ImportMagicVim:
     def get_update(self):
         self.updateSource()
         scope = importmagic.Scope.from_source(self.source)
-        # self.nvim.out_write(repr(scope) + '\n')
         unresolved, unreferenced = scope.find_unresolved_and_unreferenced_symbols()
         if not unresolved and not unreferenced:
             return None
@@ -109,7 +108,6 @@ class ImportMagicVim:
             else:
                 imports.add_import_from(*candidate)
 
-        # g_nvim.out_write(str(imports.get_update())+'\n')
         start_line, end_line, import_block = imports.get_update()
         import_block = import_block.splitlines()[:-1]
         return start_line, end_line, import_block

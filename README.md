@@ -22,6 +22,7 @@ Currently the plugin exposes a single command - `:UpdateImports`, which searches
 2. If the package containing the symbols is not installed, importmagic may find the symbol in a wrong package (rarely, most of the time it does nothing)
 3. Running `:UpdateImports` for the first time may be slow. The package needs to create an index of all packages in the environment, which happens in the background. However, if the function is called before indexing is finished, it blocks until the indexing is done and then performs the imports. Will be fixed  
 _Note_: This should be fixed, not rigorously tested yet
+4. Importmagic must be installed in the same environment that is used by neovim i.e, the environment which contains pynvim
 
 
 ## TODO

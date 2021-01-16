@@ -67,13 +67,16 @@ class ImportMagicVim:
             return None
 
         imports = importmagic.Imports(g_index, self.source)
+        old_imports = imports
         imports.remove(unreferenced)
+        if old_imports==imports:
+            return None
 
         for symbol in unresolved:
             ctr = 1
             candidates = []
             options = []
-            for score, module, variable in g_index.symbol_scores(symbol):
+            for _, module, variable in g_index.symbol_scores(symbol):
                 if ctr > 9:
                     break
                 if variable is None:

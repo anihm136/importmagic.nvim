@@ -69,7 +69,7 @@ class ImportMagicVim:
         imports = importmagic.Imports(g_index, self.source)
         old_imports = imports
         imports.remove(unreferenced)
-        if old_imports==imports:
+        if not unresolved and old_imports==imports:
             return None
 
         for symbol in unresolved:
@@ -95,25 +95,31 @@ class ImportMagicVim:
                 else:
                     imports.add_import_from(*candidate)
                 continue
-            options.append("&s Skip import")
-            options.append("&x Skip remaining")
-            imp_idx = g_nvim.call(
-                "confirm", "Choose import source:", "\n".join(options)
-            )
-            if imp_idx == len(options) - 1:
-                continue
-            elif imp_idx == len(options):
-                break
-            candidate = candidates[imp_idx - 1]
+            if options:
+                options.append("&s Skip import")
+                options.append("&x Skip remaining")
+                imp_idx = g_nvim.call(
+                    "confirm", "Choose import source:", "\n".join(options)
+                )
+                if imp_idx == 0 or imp_idx == len(options) - 1:
+                    continue
+                elif imp_idx == len(options):
+                    break
+                candidate = candidates[imp_idx - 1]
 
-            if candidate[1] is None:
-                imports.add_import(candidate[0])
+                if candidate[1] is None:
+                    imports.add_import(candidate[0])
+                else:
+                    imports.add_import_from(*candidate)
             else:
-                imports.add_import_from(*candidate)
+                g_nvim.out_write("No candidate found for {}\n".format(symbol))
 
         start_line, end_line, import_block = imports.get_update()
         import_block = import_block.splitlines()[:-1]
-        return start_line, end_line, import_block
+        if import_block != g_nvim.current.buffer[start_line:end_line]:
+            return start_line, end_line, import_block
+        else:
+            return None
 
     @pynvim.command("UpdateImports", nargs=0, sync=True)
     def updateImports(self):
@@ -124,3 +130,6 @@ class ImportMagicVim:
             if update:
                 start_line, end_line, import_block = update
                 g_nvim.current.buffer[start_line:end_line] = import_block
+                g_nvim.out_write("Updated index!\n")
+            else:
+                g_nvim.out_write("Nothing to update!\n")
